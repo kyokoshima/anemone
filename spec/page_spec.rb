@@ -181,5 +181,49 @@ module Anemone
       expect(page.to_absolute(upward_relative_path)).to eq URI("#{upward_base}#{relative_path}")      
     end
 
+    describe "Multibyte charset page" do
+      it "when EUC-JP from header" do
+        body = '<html><body>あいうえおかきくけこさしすせそ</body></html>'.encode('euc-jp')
+        p = @http.fetch_page(FakePage.new('', body: body, content_type: 'text/html; charset=EUC-JP').url) 
+        expect(p.charset).to eq 'euc-jp'
+        expect(p.doc.search('//body/text()').to_s).to eq 'あいうえおかきくけこさしすせそ'
+      end
+
+      it "when EUC-JP from meta HTML5" do
+        body = '<html><head><meta charset="EUC-JP"></head><body>あいうえおかきくけこさしすせそ</body></html>'.encode('euc-jp')
+        p = @http.fetch_page(FakePage.new('', body: body).url) 
+        expect(p.charset).to eq 'euc-jp'
+        expect(p.doc.search('//body/text()').to_s).to eq 'あいうえおかきくけこさしすせそ'
+      end
+
+      it "when EUC-JP from meta less HTML4" do
+        body = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=EUC-JP"></head><body>あいうえおかきくけこさしすせそ</body></html>'.encode('euc-jp')
+        p = @http.fetch_page(FakePage.new('', body: body).url) 
+        expect(p.charset).to eq 'euc-jp'
+        expect(p.doc.search('//body/text()').to_s).to eq 'あいうえおかきくけこさしすせそ'
+      end
+
+
+      it "when Shift_JIS from header" do
+        body = '<html><body>あいうえおかきくけこさしすせそ</body></html>'.encode('Shift_JIS')
+        p = @http.fetch_page(FakePage.new('', body: body, content_type: 'text/html; charset=Shift_JIS').url) 
+        expect(p.charset).to eq 'shift_jis'
+        expect(p.doc.search('//body/text()').to_s).to eq 'あいうえおかきくけこさしすせそ'
+      end
+      it "when Shift_JIS from meta HTML5" do
+        body = '<html><head><meta charset="Shift_JIS"></head><body>あいうえおかきくけこさしすせそ</body></html>'.encode('Shift_JIS')
+        p = @http.fetch_page(FakePage.new('', body: body).url) 
+        expect(p.charset).to eq 'shift_jis'
+        expect(p.doc.search('//body/text()').to_s).to eq 'あいうえおかきくけこさしすせそ'
+      end
+
+      it "when Shift_JIS from meta less HTML4" do
+        body = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS"></head><body>あいうえおかきくけこさしすせそ</body></html>'.encode('Shift_JIS')
+        p = @http.fetch_page(FakePage.new('', body: body).url) 
+        expect(p.charset).to eq 'shift_jis'
+        expect(p.doc.search('//body/text()').to_s).to eq 'あいうえおかきくけこさしすせそ'
+      end
+    end
+
   end
 end
