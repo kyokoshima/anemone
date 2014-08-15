@@ -124,8 +124,14 @@ module Anemone
       end
       cs = matcher[1] if matcher
 
-      cs = 'utf-8' unless cs
+      # charset from Kconv
+      unless cs
+        require 'kconv'
+        puts "★★★★★★★ #{Kconv.guess(@body)}"
+        cs = Kconv.guess(@body).to_s
+      end
 
+      cs = 'utf-8' unless cs
       cs.downcase
     end
 
