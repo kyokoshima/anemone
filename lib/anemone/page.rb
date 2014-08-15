@@ -75,8 +75,8 @@ module Anemone
     def doc
       return @doc if @doc
       if @body && html?
-        body = @body.encode("UTF-8", charset, :invalid => :replace, :undef => :replace) rescue nil
-        @doc = Nokogiri::HTML(body) if body
+        @body = @body.encode("UTF-8", charset, :invalid => :replace, :undef => :replace) rescue nil
+        @doc = Nokogiri::HTML(@body) if @body
       end
     end
 
