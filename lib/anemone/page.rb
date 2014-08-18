@@ -127,7 +127,6 @@ module Anemone
       # charset from Kconv
       unless cs
         require 'kconv'
-        puts "★★★★★★★ #{Kconv.guess(@body)}"
         cs = Kconv.guess(@body).to_s
       end
 
